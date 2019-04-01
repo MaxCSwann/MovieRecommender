@@ -1,0 +1,35 @@
+{% extends "movies/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<section>
+{% for movieRow in movieRows %}
+    <div class = "suggestion_group">
+        <div class = "row">
+        {% for movie in movieRow %}
+            <!--<a href = "/recommender/{{movie.id}}/">   -->
+                <div class = "single_movie col-xl-4 col-lg-4 col-md-6 col-sm-10 col-10">
+                    <a href = "/{{movie.id}}/">
+                    <div class = "movie_container col-12 border_rad no_pad">
+                        <img class = "image_left" src ="{{movie.Poster}}" onerror="this.onerror=null;this.src='{% static 'recommender/img/Django_poster.jpg' %}';"/>
+                        <h5>
+                            {{movie.Title}}
+                        </h5>
+                        <ul>
+                            <li>
+                                Genre: {{movie.Genre}}
+                            </li>
+                            <li>
+                                Director: {{movie.Director}} 
+                            </li>
+                        </ul>
+                    </div>
+                    </a>
+                </div>
+            <!--</a>-->
+        {% endfor %}
+        </div>
+    </div>
+{% endfor %}
+</section>
+{% endblock %}

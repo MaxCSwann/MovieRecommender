@@ -1,0 +1,106 @@
+{% extends "movies/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<section>
+    <div class = "container border_rad movie_banner no_pad">
+        <img src ="{{movie.Poster}}" onerror="this.onerror=null;this.src='{% static 'recommender/img/Django_poster.jpg' %}';"/>
+        <div class = "movie_text_content">
+            <h1> {{movie.Title}} </h1>
+            <p>{{movie.Plot}}</p>
+            <ul>
+                <li>
+                    Genre: {{movie.Genre}}
+                </li>
+                <li>
+                    Director: {{movie.Director}} 
+                </li>
+                <li>
+                    Actors: {{movie.Actors}}
+                </li>
+            </ul>
+            <a href = "{{movie.tomatoURL}}">
+                <button class = "border_rad">More Info</button>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class = "container">
+        <div class = "row movie_contents flex-column-reverse flex-lg-row">
+            <div class = "col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 border_rad">
+                <div class = "col-12 text-center">
+                    <h2>Reviews</h2>
+                    <div class="review-container">
+                    {% if LoggedIn %}
+                        <form class = "col-10 offset-1 row review_form" id ="review-form" action="">
+                            <textarea class="col-10 no_pad review_bar" id ="review-bar" placeholder="Write a review.." name="review"></textarea>
+                            <input name = "movie-ID" type = "hidden" value="{{movie.id}}">
+                            <input name = "csrf_token" type = "hidden" value="{{csrf_token}}">
+                            <button class="col-2 no_pad no_marg review_button text-right" id ="review-button" type="submit"><i class="fas fa-paper-plane"></i></button>
+                        </form>
+                    {% else %}
+                        <div class = "col-10 offset-1 row review_form" action="">
+                            <textarea class="col-10 no_pad review_bar" placeholder="Please Log In to Write a Review.." name="review" readonly></textarea>
+                            <button class="col-2 no_pad no_marg review_button text-right" id ="review-button" type="submit"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    {% endif %}
+                    </div>
+                    <div class = "reviews">
+                        {% if reviews.all %}
+                            {% for review in reviews %}
+                                <div class = "col-12">
+                                    <div class = "row single_review justify-content-center">
+                                        <div class = "col-3 align-self-center">
+                                            <img src="{{review.author.image.url}}" class="rounded" alt="Profile" width="40" height="40">
+                                        </div>
+                                        <div class = "col-9 align-self-center">
+                                            <div class="row review_text">
+                                                <p>{{review.text}}</p>
+                                            </div>
+                                            <div class = "row">
+                                                <div class = "col-12 d-flex justify-content-start text-left review_details">
+                                                    {{review.author}}
+                                                    {{review.created_date}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                                </br>
+                                <p class = "review_details">Be the first to write a review..</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class = "col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12 offset-xl-1 offset-lg-1 border_rad">
+                <div class = "col-12">
+                    <h2 class = "text-center">Recommended</h2>
+                    {% for mov in similarMovieList%}
+                        <a href = "/recommender/{{mov.id}}/">  
+                            <div class = "movie_recommendation">
+                                <img src ="{{mov.Poster}}" onerror="this.onerror=null;this.src='{% static 'recommender/img/Django_poster.jpg' %}';"/>
+                                <h5>
+                                    {{mov.Title}}
+                                </h5>
+                                <ul>
+                                    <li>
+                                        Genre: {{mov.Genre}}
+                                    </li>
+                                    <li>
+                                        Director: {{mov.Director}} 
+                                    </li>
+                                </ul>
+                            </div>
+                        </a>
+                        {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

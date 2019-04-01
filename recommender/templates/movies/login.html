@@ -1,0 +1,78 @@
+{% extends "movies/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<section class="login">
+    <div class="text-center row">
+            <form id="login-form" class = "shadow bg-dark col-lg-4 col-md-6 col-sm-8 offset-lg-4 offset-md-3 offset-2 login_form" action='/login/' method="POST" enctype="multipart/form-data">
+                <h3>Log In</h3>
+                {% csrf_token %}
+                <div class = "form-group align-items-center">
+                    <div>
+                        <label for="NameInputUpdate">Email</label>
+                        <input id="loginEmField" type = "email" name = "email" class="form-control" placeholder="Enter Email"/>
+                    </div>
+                </div>
+                <div class = "form-group align-items-center">
+                    <div>
+                        <label for="DescriptionInputUpdate">Password</label>
+                        <input id="loginPwField" type = "password" name="password" class="form-control" placeholder="Enter Password"/>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-block btn-danger">Login</button>
+                <a id="login-page-signup-modal" class="signup_link">Signup</a>
+            </form>
+    </div>
+</section>
+
+<div id= "signup_modal" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg" class = "row align-items-center" role="document">
+        <div class="modal-content text-center">
+            <h3>Sign Up</h3>
+            <form class = "col-sm-8 offset-2" action='/recommender/signup/' method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class = "form-group align-items-center">
+                    <div>
+                        <label>Name</label>
+                        <input type = "text" name = "name" class="form-control" placeholder="Enter Name"/>
+                    </div>
+                </div>
+                <div class = "form-group align-items-center">
+                    <div>
+                        <label>Email</label>
+                        <input type="email" name = "email" class="form-control"/>
+                    </div>
+                </div>
+                <div class = "form-group align-items-center">
+                    <div>
+                        <label>Password</label>
+                        <input type = "password" name="password" class="form-control"/>
+                    </div>
+                </div>
+                <div class = "form-group align-items-center">
+                    <div>
+                        <label>Date Of Birth</label>
+                        <input type="date" name = "dob" class="form-control"/>
+                    </div>
+                </div>
+                <div class = "form-group align-items-center">
+                    <div>
+                        <label>Gender</label>
+                        <select name="gender">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div class = "form-group align-items-center">
+                    <div>
+                        <label>Upload Your Picture</label>
+                        <input type="file" name = "image" accept="image/*" class="form-control"/>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-block btn-danger">Sign Up</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

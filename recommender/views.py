@@ -1,0 +1,173 @@
+import datetime
+from django.shortcuts import render
+from django.template import loader
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, Http404
+from django.contrib.auth.hashers import check_password
+from django.db import IntegrityError
+from django.core import serializers
+from .models import Movie, Review, Member
+from .forms import SignupForm
+import numpy as np
+
+########################################################################################################
+#login
+
+#called by button press or url 
+#render login page which sends post requests to signUp or Login
+def signIn(request):
+    signupForm = SignupForm()
+    return render(request, 'movies/login.html', {"signupForm" : signupForm})
+
+#if Signing up check the form, create a member then send request on to logIn
+def signUp(request):
+    if request.method=='POST':
+        form = SignupForm(request.POST, request.FILES)        
+        
+        if form.is_valid():
+            p = request.POST
+            member =  Member(username=p['email'], name=p['name'], dob=p['dob'], gender=p['gender'], email=p['email'])
+            member.set_password(p['password'])
+        
+            if len(request.FILES) <= 0:
+                member.image = 'usrImages/default.png'
+            else:
+                member.image = request.FILES['image']
+            
+            try: member.save()
+            except IntegrityError: return HttpResponseBadRequest("Email already in use")
+
+            member.save()
+            
+            return logIn(request) 
+        else:
+            return HttpResponseBadRequest("Invalid form!")
+
+#called from login.html as post request, checks login credentials
+#renders index for the time being
+def logIn(request):
+    if not ('email' in request.POST and 'password' in request.POST):
+        return HttpResponseBadRequest("Invalid form!")
+    else:        
+        email = request.POST['email']
+        password = request.POST['password']        
+        try: 
+            member = Member.objects.get(email=email)
+        except Member.DoesNotExist: 
+            return HttpResponseBadRequest('ERROR: No user found with email: ' + email)
+
+        if member.check_password(password):
+            request.session['email'] = email
+            request.session['password'] = password
+            member = Member.objects.get(email=email)
+
+            """ context = {
+               'user': member,
+               'LoggedIn': True,
+            } """
+
+            #temporarily returns to index.html
+            #response = render(request, 'movies/index.html', context)
+            return index(request)
+
+            now = datetime.datetime.utcnow()
+            max_age = 24 * 60 * 60  #one day
+            delta = now + datetime.timedelta(seconds=max_age)
+            format = "%a, %d-%b-%Y %H:%M:%S GMT"
+            expires = datetime.datetime.strftime(delta, format)
+            response.set_cookie('last_login',now,expires=expires)
+            
+            return response
+        else:
+            return HttpResponseBadRequest('Wrong password')
+                
+    return index(request)
+
+#flushes session 
+def logOut(request):
+    request.session.flush()
+    return index(request)
+    #return render(request, 'movies/index.html')
+
+#if user is logged in return the user else return None
+def getLoggedInUser(request):
+    if 'email' in request.session:
+        email = request.session['email']
+        try: member = Member.objects.get(email=email)
+        except Member.DoesNotExist: raise Http404('Member does not exist')
+        return member
+    else:
+        return None
+
+#End Refactored login
+###########################################################################################
+#page views
+def index(request):
+    #TODO: make this return a list of movies and associated similar movies in a context to send to a template 
+    #TODO: improve movie choosing algorithm
+    #at the moment this will choose the rows of movies to show randomly, whilst this is okay for 
+    #now as we were testing functionality, the algorithm for doing this could definitely be improved
+    #by catering to the loggedInUser's preferences and likes also we could choose movies based on a 
+    #disimilarity score such that on the homepage we are casting the net as wide as possible
+
+    context = {}
+
+    #first check whether a user is logged in and set contexts
+    loggedInUser = getLoggedInUser(request)
+    if loggedInUser != None:
+        context["user"] = loggedInUser
+        context["LoggedIn"] = True
+    else:
+        context["user"] = None
+        context["LoggedIn"] = False
+    
+    #this is between range of 1 inclusive and 251 exclusive (due to django 1 indexing)
+    #will not have repeats
+    randindexes = np.random.choice(np.arange(1,251), 5, replace=False)
+    
+    #get movie by index then get its similars, create a list to combine them into a row
+    #append to movie rows
+    #movie rows is a 2d list of movie objects
+    movieRows = []
+    for i in randindexes:
+        movie = Movie.objects.get(id = i)
+        similarMovies = movie.getSimilarMovies()
+        simList = list(similarMovies)
+        simList.insert(0,movie)
+        movieRows.append(simList)
+
+    context = {
+        "movieRows": movieRows,
+    }
+    return render(request, 'movies/index.html', context)
+
+
+def moviePage(request, id):
+    movie = Movie.objects.get(id = id)
+    similarMovies = movie.getSimilarMovies()
+    context = {
+        "movie": movie,
+        "similarMovieList": similarMovies,
+        "reviews" : movie.reviews.all(),
+    }
+
+    loggedInUser = getLoggedInUser(request)
+    if loggedInUser != None:
+        context["user"] = loggedInUser
+        context["LoggedIn"] = True
+    else:
+        context["user"] = None
+        context["LoggedIn"] = False
+    
+
+    if request.method == 'POST':
+        if loggedInUser != None:
+            Review.objects.create(author = loggedInUser, text = request.POST['text'], movie = movie)
+            reviews = movie.reviews.all()
+            data = serializers.serialize('json', reviews)
+            return JsonResponse(data=data, safe=False)
+        else:
+            return HttpResponseBadRequest('please Log In to submit a review')
+
+    return render(request, 'movies/moviepage.html', context)
+
+#########################################################################################
