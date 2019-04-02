@@ -94,7 +94,7 @@ class Movie(models.Model):
                 return queryset """
     
 class Member(User):
-    name = models.CharField(max_length=40)
+    name = models.CharField(max_length=100)
     dob = models.DateField(null=True)
     gender = models.CharField(max_length=10)
     image = models.ImageField(upload_to='usrImages', null=True)
