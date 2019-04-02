@@ -22,7 +22,6 @@ class Migration(migrations.Migration):
                 ('Plot', models.TextField()),
                 ('tomatoURL', models.URLField()),
                 ('Poster', models.URLField()),
-                ('slug',models.SlugField(blank=True, editable=False, max_length=255, null=True)),
             ],
         ),
     ]

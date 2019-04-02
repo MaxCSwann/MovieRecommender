@@ -28,8 +28,8 @@ FIIIIIIIXXXXXEEEEEED
 #this will be populated either by converting csv to model including only necessary attributes
 #-->or by converting pandas dataframe defined in populate.ipynb to django models <--
 class Movie(models.Model):
-    Title = models.CharField(max_length=40) #string, Title is the unique Index
-    Genre = models.CharField(max_length=40) #string, can be multiple genres e.g 'Crime, Drama'
+    Title = models.CharField(max_length=100) #string, Title is the unique Index
+    Genre = models.CharField(max_length=100) #string, can be multiple genres e.g 'Crime, Drama'
     Director = models.CharField(max_length=60) #string, can be multiple genres e.g 'Sam Wood, Edmund Goulding'
     Actors = models.TextField()#string, can be multiple genres e.g 'Ewan McGregor, Albert Finney, Billy Crudup, Jessica Lange'
     Plot = models.TextField() #long string
@@ -39,7 +39,6 @@ class Movie(models.Model):
     Poster = models.URLField()#img url 
     #Reviews = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='reviews', blank=True, null=True) #reviews for a given movie
     #slug for heroku compatibility
-    slug = models.SlugField(max_length=255, blank=True, null=True, editable=False)
 
     #TODO:create a method that computes simlarity score to all other movies returns
     #returns an ordered list of movies most similar to least similar
