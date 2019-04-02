@@ -39,7 +39,7 @@ class Movie(models.Model):
     Poster = models.URLField()#img url 
     #Reviews = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='reviews', blank=True, null=True) #reviews for a given movie
     #slug for heroku compatibility
-    slug = models.SlugField(max_length=255, blank=True, null=True)
+    slug = models.SlugField(max_length=255, blank=True, null=True, editable=False)
 
     #TODO:create a method that computes simlarity score to all other movies returns
     #returns an ordered list of movies most similar to least similar
