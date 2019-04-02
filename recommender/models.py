@@ -30,7 +30,7 @@ FIIIIIIIXXXXXEEEEEED
 class Movie(models.Model):
     Title = models.CharField(max_length=100) #string, Title is the unique Index
     Genre = models.CharField(max_length=100) #string, can be multiple genres e.g 'Crime, Drama'
-    Director = models.CharField(max_length=100) #string, can be multiple genres e.g 'Sam Wood, Edmund Goulding'
+    Director = models.CharField(max_length=150) #string, can be multiple genres e.g 'Sam Wood, Edmund Goulding'
     Actors = models.TextField()#string, can be multiple genres e.g 'Ewan McGregor, Albert Finney, Billy Crudup, Jessica Lange'
     Plot = models.TextField() #long string
     tomatoURL = models.URLField() #url to rotten tomatoes page on the movie

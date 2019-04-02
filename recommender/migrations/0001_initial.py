@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('Title', models.CharField(default='', editable=False, max_length=40)),
                 ('Genre', models.CharField(max_length=40)),
-                ('Director', models.CharField(max_length=100)),
+                ('Director', models.CharField(max_length=60)),
                 ('Actors', models.TextField()),
                 ('Plot', models.TextField()),
                 ('tomatoURL', models.URLField()),
