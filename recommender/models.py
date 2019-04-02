@@ -38,16 +38,7 @@ class Movie(models.Model):
     #Key_words = models.TextField() #is the keyword extraction of the plot using rake 
     Poster = models.URLField()#img url 
     #Reviews = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='reviews', blank=True, null=True) #reviews for a given movie
-    #slug for heroku compatibility
 
-    #TODO:create a method that computes simlarity score to all other movies returns
-    #returns an ordered list of movies most similar to least similar
-    #TODO:maake this save as a list as a movie attribute
-    #try catch when trying to return movie list, if is set return
-    #else compute, save, return
-
-    #TODO: create a function that returns list of similar movies
-    #returns a queryset of movie objects
     def getSimilarMovies(self):   
 
         if os.path.isfile('./cosine_sim.npy'):
