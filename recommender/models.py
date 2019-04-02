@@ -38,6 +38,8 @@ class Movie(models.Model):
     #Key_words = models.TextField() #is the keyword extraction of the plot using rake 
     Poster = models.URLField()#img url 
     #Reviews = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='reviews', blank=True, null=True) #reviews for a given movie
+    #slug for heroku compatibility
+    slug = models.SlugField(max_length=255)
 
     #TODO:create a method that computes simlarity score to all other movies returns
     #returns an ordered list of movies most similar to least similar
