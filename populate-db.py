@@ -30,37 +30,12 @@ db_as_dict = df.to_dict('index')
 
 print(db_as_dict)
 
-
-# In[4]:
-
-
-print(db_as_dict[3])
-
-
 # In[5]:
 
 
 for index in db_as_dict:
     mov = Movie(**db_as_dict[index])
     mov.save()
-
-
-# In[ ]:
-
-
-
-
-
-# In[8]:
-
-
-for movie in Movie.objects.all():
-    print(movie.id)
-    print(movie.Title)
-
-
-# In[ ]:
-
 
 
 
