@@ -1,8 +1,0 @@
-{
-    "terminal.integrated.env.osx": {
-        "PATH": ""
-    },
-    "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true,
-    "python.pythonPath": "C:\\Users\\max\\Anaconda3\\envs\\MovieRecommender\\python.exe"
-}
