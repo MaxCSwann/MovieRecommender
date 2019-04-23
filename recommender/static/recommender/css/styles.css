@@ -181,6 +181,7 @@ nav{
 }
 .review_text > p{
     margin-bottom: 0;
+    word-break:break-all;
 }
 .review_details{
     color: var(--light-grey);

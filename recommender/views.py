@@ -60,11 +60,6 @@ def logIn(request):
             request.session['password'] = password
             member = Member.objects.get(email=email)
 
-            """ context = {
-               'user': member,
-               'LoggedIn': True,
-            } """
-
             #temporarily returns to index.html
             #response = render(request, 'movies/index.html', context)
             return index(request)
@@ -149,12 +144,12 @@ def moviePage(request, id):
         context["user"] = None
         context["LoggedIn"] = False
     
-
     if request.method == 'POST':
         if loggedInUser != None:
             Review.objects.create(author = loggedInUser, text = request.POST['text'], movie = movie)
             reviews = movie.reviews.all()
-            data = serializers.serialize('json', reviews)
+            #as author is foreign key to reviews, needed to add natural foreign keys for serialisation
+            data = serializers.serialize('json', reviews, use_natural_foreign_keys=True, use_natural_primary_keys=True)
             return JsonResponse(data=data, safe=False)
         else:
             return HttpResponseBadRequest('please Log In to submit a review')

@@ -49,6 +49,11 @@ class Member(User):
     likes = models.ForeignKey(Movie, related_name = "liked", on_delete=models.CASCADE, blank = True, null=True)#user likes
     answers = models.CharField(max_length=200, blank=True, null=True)
 
+    class Meta:
+        unique_together = (('name', 'image'),)
+    def natural_key(self):
+        return (self.email, self.image.url)
+
 class Review(models.Model):
     movie = models.ForeignKey(Movie, related_name='reviews', on_delete=models.CASCADE, blank = True, null=True) #reviews for a given movie
     author = models.ForeignKey(Member, related_name='author', on_delete=models.CASCADE, blank = True, null=True)
