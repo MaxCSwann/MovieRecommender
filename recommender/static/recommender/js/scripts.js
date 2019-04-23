@@ -68,8 +68,7 @@ function updateReviews(reviews){
                         </div>\
                     </div>\
                 </a>\
-            </div>';
-                
+            </div>';    
         }
         return htmlstr;
     });
