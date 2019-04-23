@@ -81,7 +81,7 @@
                 <div class = "col-12">
                     <h2 class = "text-center">Recommended</h2>
                     {% for mov in similarMovieList%}
-                        <a href = "/recommender/{{mov.id}}/">  
+                        <a href = "/{{mov.id}}/">  
                             <div class = "movie_recommendation">
                                 <img src ="{{mov.Poster}}" onerror="this.onerror=null;this.src='{% static 'recommender/img/Django_poster.jpg' %}';"/>
                                 <h5>
