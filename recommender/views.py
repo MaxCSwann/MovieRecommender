@@ -102,13 +102,6 @@ def getLoggedInUser(request):
 ###########################################################################################
 #page views
 def index(request):
-    #TODO: make this return a list of movies and associated similar movies in a context to send to a template 
-    #TODO: improve movie choosing algorithm
-    #at the moment this will choose the rows of movies to show randomly, whilst this is okay for 
-    #now as we were testing functionality, the algorithm for doing this could definitely be improved
-    #by catering to the loggedInUser's preferences and likes also we could choose movies based on a 
-    #disimilarity score such that on the homepage we are casting the net as wide as possible
-
     context = {}
 
     #first check whether a user is logged in and set contexts
@@ -135,9 +128,7 @@ def index(request):
         simList.insert(0,movie)
         movieRows.append(simList)
 
-    context = {
-        "movieRows": movieRows,
-    }
+    context ["movieRows"] = movieRows
     return render(request, 'movies/index.html', context)
 
 
@@ -170,4 +161,52 @@ def moviePage(request, id):
 
     return render(request, 'movies/moviepage.html', context)
 
+def testingExperiment(request):
+    movieTestSet = [80, 138, 155, 176, 218, 129, 90, 207, 166, 76, 95, 203, 99, 105, 225, 246, 18, 158, 9, 56]
+    context = {}
+    
+    loggedInUser = getLoggedInUser(request)
+    if loggedInUser != None:
+        context["user"] = loggedInUser
+        context["LoggedIn"] = True
+    else:
+        return signIn(request)
+
+        
+    if request.method == 'GET':
+        request.session['counter'] = 0
+        count = request.session['counter']
+        request.session['answers'] = []
+    elif request.method == 'POST':
+        if request.session['counter']  >= 19:
+            print(request.session['answers'])
+            ans = request.session['answers']
+            #have to store array as a string because django does not have array fields for sqlite dbs
+            stringAns = ";".join(ans)
+            loggedInUser.answers = stringAns
+            loggedInUser.save()
+            request.session['answers'] = []
+            return HttpResponse('Thank you for taking the time to complete this experiment!')
+        
+        request.session['counter'] += 1
+        count = request.session['counter']
+        answer = request.POST['choice']
+        #append answer to the array
+        if not 'answers' in request.session or not request.session['answers']:
+            request.session['answers'] = [answer]
+        else:
+            answers_list = request.session['answers']
+            answers_list.append(answer)
+            request.session['answers'] = answers_list
+
+    movie = Movie.objects.get(id = movieTestSet[count])
+    similarMovies = movie.getSimilarMovies()
+    randMoviesIndexes= np.random.choice(np.arange(1,251), 10, replace=False)
+    randMovies = Movie.objects.filter(id__in=randMoviesIndexes)
+    
+    context["movie"] = movie
+    context["similarMovieList"] = similarMovies
+    context["randomMovieList" ] = randMovies
+
+    return render(request, 'movies/test.html', context)
 #########################################################################################

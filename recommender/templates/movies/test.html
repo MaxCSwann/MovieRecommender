@@ -1,0 +1,91 @@
+{% extends "movies/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<section>
+    <div class = "container border_rad movie_banner no_pad">
+        <img src ="{{movie.Poster}}" onerror="this.onerror=null;this.src='{% static 'recommender/img/Django_poster.jpg' %}';"/>
+        <div class = "movie_text_content">
+            <h1> {{movie.Title}} </h1>
+            <p>{{movie.Plot}}</p>
+            <ul>
+                <li>
+                    Genre: {{movie.Genre}}
+                </li>
+                <li>
+                    Director: {{movie.Director}} 
+                </li>
+                <li>
+                    Actors: {{movie.Actors}}
+                </li>
+            </ul>
+            <a href = "{{movie.tomatoURL}}">
+                <button class = "border_rad">More Info</button>
+            </a>
+        </div>
+    </div>
+</section>
+<section>
+<div class = "container">
+    <div class ="row">
+        <div class = "col-10 offset-1 text-center">
+        <div class="progress"> 
+            <div class="progress-bar bg-success" role="progressbar" style="width: {% widthratio request.session.counter 20 100 %}%"></div>
+        </div>
+        <h4>{{request.session.counter}}/20</h4>
+        </div>
+    </div>
+</div>
+</section>
+<section>
+<form action='/test/' method="POST">
+{% csrf_token %}
+    <div class = "container">
+        <div class = "row movie_contents flex-column-reverse flex-lg-row">
+            <div class = "col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12 border_rad text-center">
+                <button name="choice" value="true" type="submit" class="btn btn-success" style="margin-top:10px; margin-bottom:15px; width:100%"> choice </button>
+                <div class = "col-12 text-left">
+                    {% for mov in similarMovieList%}
+                            <div class = "movie_recommendation">
+                                <img src ="{{mov.Poster}}" onerror="this.onerror=null;this.src='{% static 'recommender/img/Django_poster.jpg' %}';"/>
+                                <h5>
+                                    {{mov.Title}}
+                                </h5>
+                                <ul>
+                                    <li>
+                                        Genre: {{mov.Genre}}
+                                    </li>
+                                    <li>
+                                        Director: {{mov.Director}} 
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endfor %}
+                </div>
+            </div>
+            <div class = "col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12 offset-xl-2 offset-lg-2 border_rad text-center">
+                <button name="choice" value="false" type="submit" class="btn btn-success" style="margin-top:10px; margin-bottom:15px; width:100%"> choice </button>
+                <div class = "col-12 text-left">
+                    {% for mov in randomMovieList%}
+                            <div class = "movie_recommendation">
+                                <img src ="{{mov.Poster}}" onerror="this.onerror=null;this.src='{% static 'recommender/img/Django_poster.jpg' %}';"/>
+                                <h5>
+                                    {{mov.Title}}
+                                </h5>
+                                <ul>
+                                    <li>
+                                        Genre: {{mov.Genre}}
+                                    </li>
+                                    <li>
+                                        Director: {{mov.Director}} 
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+</section>
+{% endblock %}

@@ -8,25 +8,6 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
 
-""" 
----------------------
-where I left off 
----------------------
-currently the primary key of a movie is its title
-these are unique but it makes things difficult 
-when i got rid of the primary key attribute django complained
-it gets confused when it tries to reassign ids 
-https://stackoverflow.com/questions/32991965/you-are-trying-to-add-a-non-nullable-field-id-to-contact-info-without-a-defaul
-this stack overflow explains the problem perfectly
-i tried resetting my db but apparently this didnt do anything and the problem persists
-so now we have no movies in our db 
-will need to re add them all in the populate db.ipynb file
-
-update:
-FIIIIIIIXXXXXEEEEEED
-"""
-#this will be populated either by converting csv to model including only necessary attributes
-#-->or by converting pandas dataframe defined in populate.ipynb to django models <--
 class Movie(models.Model):
     Title = models.CharField(max_length=100) #string, Title is the unique Index
     Genre = models.CharField(max_length=100) #string, can be multiple genres e.g 'Crime, Drama'
@@ -34,11 +15,8 @@ class Movie(models.Model):
     Actors = models.TextField()#string, can be multiple genres e.g 'Ewan McGregor, Albert Finney, Billy Crudup, Jessica Lange'
     Plot = models.TextField() #long string
     tomatoURL = models.URLField() #url to rotten tomatoes page on the movie
-    #bag_of_words = models.TextField() #will need to generate (not in csv initially) space seperated string
-    #Key_words = models.TextField() #is the keyword extraction of the plot using rake 
     Poster = models.URLField()#img url 
-    #Reviews = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='reviews', blank=True, null=True) #reviews for a given movie
-
+    
     def getSimilarMovies(self):   
 
         if os.path.isfile('./cosine_sim.npy'):
@@ -62,27 +40,6 @@ class Movie(models.Model):
         #queryset is all movies with matching ids
         return Movie.objects.filter(id__in=top_10_indexes)
         #return recommended_movies
-
-        #pseudo code
-        """      
-                if iset file.cosine_simlarity
-                    mat = load(cosine_simlarity)
-                else
-                    computeSimilarityMatrix()
-                    mat = load(cosine_similarity)
-
-            # creating a Series for the movie titles so they are associated to an ordered numerical
-            # list I will use later to match the indexes
-            indices = pd.Series(df.index)
-            indices[:5]
-                similarities = mat[self.id]
-                orderedIDs = similarties.order()
-                queryset = []
-                foreach id in orderedIds
-                    movie = Movie.objects.get(id= id)
-                    queryset.add(movie)
-
-                return queryset """
     
 class Member(User):
     name = models.CharField(max_length=100)
@@ -90,6 +47,7 @@ class Member(User):
     gender = models.CharField(max_length=10)
     image = models.ImageField(upload_to='usrImages', null=True)
     likes = models.ForeignKey(Movie, related_name = "liked", on_delete=models.CASCADE, blank = True, null=True)#user likes
+    answers = models.CharField(max_length=200, blank=True, null=True)
 
 class Review(models.Model):
     movie = models.ForeignKey(Movie, related_name='reviews', on_delete=models.CASCADE, blank = True, null=True) #reviews for a given movie
